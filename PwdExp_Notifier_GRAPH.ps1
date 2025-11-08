@@ -61,8 +61,9 @@ $users | ForEach-Object {
     if (($daysleft -le 10) -and ($daysleft -gt -1)) {
         Write-Host "Sending email to $($_.UserPrincipalName)..." -ForegroundColor DarkGreen
         $email = @{
-            Message         = @{
+            Message           = @{
                 Subject       = "Password Expiration"
+                Importance    = "High"
                 Body          = @{
                     ContentType = "Text"
                     Content     = "$($_.Name), your password will expire in $daysLeft days!
@@ -94,4 +95,5 @@ ___.           ________  ____   _____ ________
      \/\/             \/          |__|        \/ 
                         "
 Stop-Transcript
+
 Remove-Variable tenantID,appID,secretValue,senderAddress,ClientSecretPass,ClientSecretCredentials
