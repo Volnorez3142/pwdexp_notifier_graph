@@ -61,7 +61,7 @@ $users | ForEach-Object {
     if (($daysleft -le 10) -and ($daysleft -gt -1)) {
         Write-Host "Sending email to $($_.UserPrincipalName)..." -ForegroundColor DarkGreen
         $email = @{
-            Message           = @{
+            Message = @{
                 Subject       = "Password Expiration"
                 Importance    = "High"
                 Body          = @{
@@ -72,7 +72,7 @@ Link: https://mysignins.microsoft.com/security-info/password/change `n`
 THIS IS AN AUTOMATED EMAIL.
 SYSTEM ADMINISTRATORS WILL NEVER ASK YOUR PASSWORD OR SEND YOU A QR CODE." `
                 }
-                ToRecipients  = @(
+                ToRecipients = @(
                     @{
                         EmailAddress = @{
                             Address = $_.UserPrincipalName
@@ -97,3 +97,4 @@ ___.           ________  ____   _____ ________
 Stop-Transcript
 
 Remove-Variable tenantID,appID,secretValue,senderAddress,ClientSecretPass,ClientSecretCredentials
+
