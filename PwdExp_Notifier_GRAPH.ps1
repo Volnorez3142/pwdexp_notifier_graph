@@ -31,16 +31,16 @@ Start-Transcript -path C:\by3142\PasswordNotifier\GRAPHNotificationLog_$(Get-Dat
 Import-Module Microsoft.Graph.Users.Actions
 $tenantID = "TENANT ID" #CAN BE FOUND HERE https://entra.microsoft.com/#view/Microsoft_AAD_IAM/TenantOverview.ReactView
 $appID = "APP ID" #APP MUST BE CREATED WITH MAIL.SEND (SEND MAIL AS ANY USER) PERMISSION
-$secretValue = "API KEY / SECRET VALUE" #API KEY MUST BE CREATED WITHIN THE APP
-$senderAddress = "SENDER ADDRESS"
-$ClientSecretPass = ConvertTo-SecureString -String $secretValue -AsPlainText -Force
-$ClientSecretCredentials = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList $appID, $ClientSecretPass
-Connect-MgGraph -TenantId $TenantId -ClientSecretCredential $ClientSecretCredentials
+$secret = "API KEY / SECRET VALUE" #API KEY MUST BE CREATED WITHIN THE APP
+$senderupn = "SENDER ADDRESS"
+$secretsecurestring = ConvertTo-SecureString -String $secret -AsPlainText -Force
+$credentials = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList $appID, $secretsecurestring
+Connect-MgGraph -TenantId $TenantId -ClientSecretCredential $credentials
 
 #DEFYING THE SCOPE, PARSING ALL THE ACTIVE USERS
 Import-Module ActiveDirectory
-$vardistinguishedname = "*OU=Sakurada Space,OU=Volnorez,DC=sakurada,DC=lan"
-$users = Get-ADUser -Filter * -Properties UserPrincipalName,pwdLastSet,PasswordNeverExpires,DistinguishedName | Where { ($_.Enabled -eq $True) -and ($_.DistinguishedName -like $vardistinguishedname) }
+$dnscope = "*OU=Sakurada Space,OU=Volnorez,DC=sakurada,DC=lan"
+$users = Get-ADUser -Filter * -Properties UserPrincipalName,pwdLastSet,PasswordNeverExpires,DistinguishedName | Where { ($_.Enabled -eq $True) -and ($_.DistinguishedName -like $dnscope) }
 
 #CHECKING HOW MANY DAYS THERE IS LEFT TILL THE PASSWORD EXPIRES AND NOTIFYING THE USER
 $users | ForEach-Object {
@@ -81,7 +81,7 @@ SYSTEM ADMINISTRATORS WILL NEVER ASK YOUR PASSWORD OR SEND YOU A QR CODE." `
                 )
             }
         }
-        Send-MgUserMail -UserId $senderAddress -BodyParameter $email
+        Send-MgUserMail -UserId $senderupn -BodyParameter $email
     }
 }
 
@@ -95,6 +95,4 @@ ___.           ________  ____   _____ ________
      \/\/             \/          |__|        \/ 
                         "
 Stop-Transcript
-
-Remove-Variable tenantID,appID,secretValue,senderAddress,ClientSecretPass,ClientSecretCredentials
-
+Remove-Variable tenantID,appID,secret,senderupn,secretsecurestring,credentials
