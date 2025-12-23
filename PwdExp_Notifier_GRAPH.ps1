@@ -49,7 +49,7 @@ $users | ForEach-Object {
     $pwmaxage = if ($pso) { 
         $pso.MaxPasswordAge
     } else {
-        (Get-ADDomain).MaxPasswordAge
+        (Get-ADDefaultDomainPasswordPolicy).MaxPasswordAge
     }
     $setdate = [DateTime]::FromFileTimeUtc([int64]$_.pwdLastSet)
     $exp = $setdate + $pwmaxage
@@ -96,3 +96,4 @@ ___.           ________  ____   _____ ________
                         "
 Stop-Transcript
 Remove-Variable tenantID,appID,secret,senderupn,secretsecurestring,credentials
+
